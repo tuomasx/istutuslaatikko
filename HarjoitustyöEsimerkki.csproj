@@ -1,0 +1,89 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Assemblies\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Caeval">
+      <HintPath>Assemblies\Caeval.dll</HintPath>
+    </Reference>
+    <Reference Include="Enterprixe.BooleanSDK">
+      <HintPath>Assemblies\Enterprixe.BooleanSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Enterprixe.LocalStorageManager">
+      <HintPath>Assemblies\Enterprixe.LocalStorageManager.dll</HintPath>
+    </Reference>
+    <Reference Include="Enterprixe.rouvgadBIM">
+      <HintPath>Assemblies\Enterprixe.rouvgadBIM.dll</HintPath>
+    </Reference>
+    <Reference Include="Enterprixe.rouvgadSDK">
+      <HintPath>Assemblies\Enterprixe.rouvgadSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="EpxToolsWPFNet6">
+      <HintPath>Assemblies\EpxToolsWPFNet6.dll</HintPath>
+    </Reference>
+    <Reference Include="EpxToolsWPFNet6Viewport">
+      <HintPath>Assemblies\EpxToolsWPFNet6Viewport.dll</HintPath>
+    </Reference>
+    <Reference Include="GLStandardGraphicsLib">
+      <HintPath>Assemblies\GLStandardGraphicsLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SqlServerCe">
+      <HintPath>Assemblies\System.Data.SqlServerCe.dll</HintPath>
+    </Reference>
+    <Reference Include="ValosIfc">
+      <HintPath>Assemblies\ValosIfc.dll</HintPath>
+    </Reference>
+    <Reference Include="ValosIFCExport">
+      <HintPath>Assemblies\ValosIFCExport.dll</HintPath>
+    </Reference>
+    <Reference Include="ValosPlugins_RistekPlugin">
+      <HintPath>Assemblies\ValosPlugins_RistekPlugin.dll</HintPath>
+    </Reference>
+    <Reference Include="ValosService">
+      <HintPath>Assemblies\ValosService.dll</HintPath>
+    </Reference>
+    <Reference Include="ValosUITools">
+      <HintPath>Assemblies\ValosUITools.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(OutDir)HarjoitustyöEsimerkki.dll&quot; &quot;$(USERPROFILE)\Documents\Valos Modeler\Plugins&quot;" />
+  </Target>
+
+</Project>
