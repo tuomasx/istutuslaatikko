@@ -9,18 +9,18 @@ using System.Windows;
 namespace BIMKurssi
 {
     /// <summary>
-    /// Tietomalliluokka joka tallentuu kantaan
+    /// Tietomalliluokka joka tallentuu kantaan. Vaihda Esimerkki oman harjoitustyösi nimeksi
     /// </summary>
     public  class EsimerkkiRakenne : Epx.BIM.Models.Model3DNode, Epx.BIM.Plugins.IPluginNode
     {
-        #region älä tee muutoksia
         /// <summary>
         /// Initializes a new instance of the <see cref="Esimerkkirakenne"/> class.
         /// </summary>
         public EsimerkkiRakenne() : this("EsimerkkiRakenne")
         {
         }
-         [Epx.BIM.NodeData]
+        #region älä tee muutoksia
+        [Epx.BIM.NodeData]
         public string AssemblyName { get; set; }
         [Epx.BIM.NodeData]
         public string FullClassName { get; set; }

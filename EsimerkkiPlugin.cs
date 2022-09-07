@@ -16,7 +16,7 @@ using System.Windows.Media.Media3D;
 namespace BIMKurssi
 {
     /// <summary>
-    /// Esimerkki "pruju" harjoitustyöhön
+    /// Esimerkki "pruju" harjoitustyöhön. Vaihda luokkien nimistä Esimerkki oman harjoitustyösi nimeksi
     /// </summary>
     public class EsimerkkiPlugin : PluginTool, IModelViewFeature
     {
