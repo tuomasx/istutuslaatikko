@@ -83,7 +83,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(OutDir)HarjoitustyöEsimerkki.dll&quot; &quot;$(USERPROFILE)\Documents\Valos Modeler\Plugins&quot;" />
+    <Exec Command="copy &quot;$(OutDir)$(AssemblyName).dll&quot; &quot;$(USERPROFILE)\Documents\Valos Modeler\Plugins&quot;" />
   </Target>
 
 </Project>

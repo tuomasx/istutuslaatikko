@@ -142,6 +142,8 @@ namespace BIMKurssi
                 _viewModel.Thickness = esimerkki.Thickness;
                 _startPoint = esimerkki.Origin;
                 _endPoint = _startPoint + esimerkki.XAxis;
+                // pidet‰‰n pisteet vaakassa, kaltevuus parametrien kautta
+                _endPoint.Z = _startPoint.Z;
             }
 
         }
@@ -187,6 +189,8 @@ namespace BIMKurssi
 
         void IModelViewFeature.MouseMoved(Point3D currentPoint)
         {
+            Point3D startP = _startPoint;
+            Point3D  endP = _endPoint;
             if (inputPointIndex == 0)
             {
                 Vector3D vek = _endPoint - _startPoint;
@@ -202,6 +206,8 @@ namespace BIMKurssi
             _modelViewNodes.Clear();
             _modelViewNodes.AddRange(Excecute(true, out Action doDelegate, out Action undoDelegate, out List<BaseDataNode> updateNodes));
             if (_FeatureEngine != null) _FeatureEngine.PluginUpdate3D(false);
+            _startPoint = startP;
+            _endPoint = endP;
         }
         /// <summary>
         /// Kelvollisen is‰nn‰n tarkistus hierarkiassa
