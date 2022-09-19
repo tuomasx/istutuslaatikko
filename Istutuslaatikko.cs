@@ -11,12 +11,12 @@ namespace BIMKurssi
     /// <summary>
     /// Tietomalliluokka joka tallentuu kantaan. Vaihda Esimerkki oman harjoitustyösi nimeksi
     /// </summary>
-    public  class EsimerkkiRakenne : Epx.BIM.Models.Model3DNode, Epx.BIM.Plugins.IPluginNode
+    public  class Istutuslaatikko : Epx.BIM.Models.Model3DNode, Epx.BIM.Plugins.IPluginNode
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Esimerkkirakenne"/> class.
         /// </summary>
-        public EsimerkkiRakenne() : this("EsimerkkiRakenne")
+        public Istutuslaatikko() : this("EsimerkkiRakenne")
         {
         }
         #region älä tee muutoksia
@@ -26,14 +26,16 @@ namespace BIMKurssi
         public string FullClassName { get; set; }
         #endregion
         /// <summary>
-        /// Initializes a new instance of the <see cref="EsimerkkiRakenne"/> class.
+        /// Initializes a new instance of the <see cref="Istutuslaatikko"/> class.
         /// Tässä konstruktorissa alustetaan oletuarvot parametreille
         /// </summary>
         /// <param name="name">The name.</param>
-        public EsimerkkiRakenne(string name) : base(name)
+        public Istutuslaatikko(string name) : base(name)
         {
             Thickness = 50;
             Width = 150;
+            LengthX = 1000;
+            LengthY = 1500;
             Origin = new Point3D();
             XAxis = new Vector3D(1, 0, 0);
             YAxis = new Vector3D(0, 1, 0);
@@ -50,6 +52,11 @@ namespace BIMKurssi
         /// <summary>
         /// Leveys
         /// </summary>
+        [Epx.BIM.NodeData]
+        public double LengthY { get; set; }
+        [Epx.BIM.NodeData]
+
+        public double LengthX { get; set; }
         [Epx.BIM.NodeData]
         public double Width { get; set; }
         #endregion

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace BIMKurssi
 {
-    public class EsimerkkiDialogViewModel : INotifyPropertyChanged
+    public class IstutuslaatikkoDialogViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Konstruktori, aseta oletusarvot muuttujille
         /// </summary>
-        public EsimerkkiDialogViewModel()
+        public IstutuslaatikkoDialogViewModel()
         {
-            Name = "EsimerkkiRakenne";
+            Name = "Istutuslaatikko";
             Thickness = 100;
             Width = 300;
 
@@ -35,7 +35,7 @@ namespace BIMKurssi
         /// <summary>
         /// Rakenteen nimi
         /// </summary>
-        public string Name { get; set; }    
+        public string Name { get; set; }
         /// <summary>
         /// Paksuus
         /// </summary>
@@ -45,5 +45,9 @@ namespace BIMKurssi
         /// </summary>
         public double Width { get; set; }
         #endregion
+
+        public double LengthX { get; set; }
+        public double LengthY { get; set; }
     }
+
 }

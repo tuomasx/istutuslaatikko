@@ -18,7 +18,7 @@ namespace BIMKurssi
     /// <summary>
     /// Esimerkki "pruju" harjoitustyöhön. Vaihda luokkien nimistä Esimerkki oman harjoitustyösi nimeksi
     /// </summary>
-    public class EsimerkkiPlugin : PluginTool, IModelViewFeature
+    public class IstutuslaatikkoPlugin : PluginTool, IModelViewFeature
     {
         #region ei muutoksia
         protected System.Windows.Media.Media3D.Point3D _startPoint;
@@ -26,8 +26,8 @@ namespace BIMKurssi
         private int inputPointIndex;
         #endregion
         // luokan EsimerkkiDialogViewModel nimen voi vaihtaa, jätä loppu DialogViewModel
-        internal EsimerkkiDialogViewModel _viewModel;
-        public EsimerkkiPlugin()
+        internal IstutuslaatikkoDialogViewModel _viewModel;
+        public IstutuslaatikkoPlugin()
         {
             // alusat haluamasi alkuarvot
             _startPoint = new Point3D();
@@ -37,7 +37,7 @@ namespace BIMKurssi
             inputPointIndex = 0;
             #endregion
             // muutitko luokan nimen ?
-            _viewModel = new EsimerkkiDialogViewModel();
+            _viewModel = new IstutuslaatikkoDialogViewModel();
         }
         #region ei muutoksia
         private List<BaseDataNode> _modelViewNodes = new List<BaseDataNode>();
@@ -46,7 +46,7 @@ namespace BIMKurssi
         public override bool SupportsEditMode => true;        
         #endregion
         // Menussa näkyvän nimi, on syytä muuttaa
-        public override string NameForMenu { get { return "EsimerkkiRakenne"; } }
+        public override string NameForMenu { get { return "Istutuslaatikko"; } }
         /// <summary>
         /// Menun tooltip teksti, on syytä muuttaa
         /// </summary>
@@ -54,7 +54,7 @@ namespace BIMKurssi
         {
             get
             {
-                return "Luo esimerkkirakenteen";
+                return "Luo Istutuslaatikon";
             }
         }
         #region todennäköisesti ei muutoksia, jos kysytään kaksi pistettä: alku- ja loppupiste
@@ -130,10 +130,10 @@ namespace BIMKurssi
         /// <param name="initialPlugin"></param>
         public override void InitializePluginParameters(PluginTool initialPlugin)
         {
-            EsimerkkiRakenne esimerkki = IsInEditMode ? PluginDataNode as EsimerkkiRakenne : null;
+            Istutuslaatikko esimerkki = IsInEditMode ? PluginDataNode as Istutuslaatikko : null;
             inputPointIndex = 0;
             // luodaan dialogin tarvitsema view model luokka
-            _viewModel = new EsimerkkiDialogViewModel();
+            _viewModel = new IstutuslaatikkoDialogViewModel();
             // jos edit tila, niin asetetaan arvot tietomalli luokalta
             if (esimerkki != null)
             {
@@ -245,7 +245,7 @@ namespace BIMKurssi
             // luodaan uutta tai preview piirto
             if (!IsInEditMode || previewMode)
             {
-                EsimerkkiRakenne rakenne = CreateOrUpdateModel(_viewModel);
+                Istutuslaatikko rakenne = CreateOrUpdateModel(_viewModel);
                  if (previewMode) return new List<BaseDataNode>() { rakenne };
                 doDelegate += delegate
                 {
@@ -261,7 +261,7 @@ namespace BIMKurssi
             // muokataan olemassa olevaa
             else
             {
-                EsimerkkiRakenne rakenne = PluginDataNode as EsimerkkiRakenne;
+                Istutuslaatikko rakenne = PluginDataNode as Istutuslaatikko;
                 //Point3D oldOrigin = rakenne.Origin;
                 //Vector3D oldX = rakenne.XAxis;
                 //EsimerkkiDialogViewModel oldParameters = new EsimerkkiDialogViewModel()
@@ -298,14 +298,14 @@ namespace BIMKurssi
         /// <param name="parametrit">Dialog view model luokka, jossa käyttäjän dialogissa antamat arvot</param>
         /// <param name="oldEsimerkki">Create moodissa on null, muokkaus tilassa olemassa olevan luokan instanssi</param>
         /// <returns></returns>
-        private EsimerkkiRakenne CreateOrUpdateModel(EsimerkkiDialogViewModel parametrit, EsimerkkiRakenne oldEsimerkki=null)
+        private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit, Istutuslaatikko oldEsimerkki=null)
         {
-            EsimerkkiRakenne retVal;
+            Istutuslaatikko retVal;
             // onko kysessä uuden luonti vai olemassa olevan muokkaaminen
             if (oldEsimerkki == null)
             {
                 // luodaan uusi
-                retVal = new EsimerkkiRakenne();
+                retVal = new Istutuslaatikko();
             } else
             {
                 // muokataan vanhaa
