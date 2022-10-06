@@ -16,7 +16,7 @@ namespace BIMKurssi
         /// <summary>
         /// Initializes a new instance of the <see cref="Esimerkkirakenne"/> class.
         /// </summary>
-        public Istutuslaatikko() : this("EsimerkkiRakenne")
+        public Istutuslaatikko() : this("Istutuslaatikko")
         {
         }
         #region älä tee muutoksia

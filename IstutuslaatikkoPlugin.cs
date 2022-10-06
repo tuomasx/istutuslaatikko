@@ -144,6 +144,8 @@ namespace BIMKurssi
                 _endPoint = _startPoint + istutuslaatikko.XAxis;
                 _viewModel.TimberXLength = istutuslaatikko.TimberXLength;
                 _viewModel.TimberYLength = istutuslaatikko.TimberYLength;
+                _viewModel.TimberZLength = istutuslaatikko.TimberZLength;
+                _viewModel.TimberStackAmount = istutuslaatikko.TimberStackAmount;
                 // pidet‰‰n pisteet vaakassa, kaltevuus parametrien kautta
                 _endPoint.Z = _startPoint.Z;
             }
@@ -419,6 +421,8 @@ namespace BIMKurssi
             retVal.YAxis = new Vector3D(0, 0, 1);
 
             Epx.BIM.Models.Member3D mem = new Epx.BIM.Models.Member3D();
+
+           
 
             mem.Name = "Vaaassa";
             mem.Origin = new Point3D(0, 0, 0);

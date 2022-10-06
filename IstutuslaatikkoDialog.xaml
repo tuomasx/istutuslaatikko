@@ -28,22 +28,22 @@
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="4,6,4,0"/>
 
         <TextBlock Text="Laatikon x-pituus" Grid.Column="0" Grid.Row="1" Margin="4,4,0,0"/>
-        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Thickness}" Margin="4,6,4,0"/>
+        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding BoxXLength}" Margin="4,6,4,0"/>
 
         <TextBlock Text="Laatikon y-pituus" Grid.Column="0" Grid.Row="2" Margin="4,4,0,0"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Width}" Margin="4,6,4,0"/>
+        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding BoxYLength}" Margin="4,6,4,0"/>
 
         <TextBlock Text="puutavaran x-pituus" Grid.Column="0" Grid.Row="3" Margin="4,4,0,0"/>
-        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Width}" Margin="4,6,4,0"/>
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding TimberXLength}" Margin="4,6,4,0"/>
 
         <TextBlock Text="puutavaran y-pituus" Grid.Column="0" Grid.Row="4" Margin="4,4,0,0"/>
-        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Width}" Margin="4,6,4,0"/>
+        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding TimberYLength}" Margin="4,6,4,0"/>
 
         <TextBlock Text="puutavaran z-pituus" Grid.Column="0" Grid.Row="5" Margin="4,4,0,0"/>
-        <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Width}" Margin="4,6,4,0"/>
+        <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding TimberZLength}" Margin="4,6,4,0"/>
 
         <TextBlock Text="puutavaran paallekaisyys" Grid.Column="0" Grid.Row="6" Margin="4,4,0,0"/>
-        <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding Width}" Margin="4,6,4,0"/>
+        <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding TimberStackAmount}" Margin="4,6,4,0"/>
 
 
         <StackPanel Margin="8,8,4,8" Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right" Grid.ColumnSpan="2">
