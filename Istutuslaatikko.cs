@@ -11,7 +11,7 @@ namespace BIMKurssi
     /// <summary>
     /// Tietomalliluokka joka tallentuu kantaan. Vaihda Esimerkki oman harjoitustyösi nimeksi
     /// </summary>
-    public  class Istutuslaatikko : Epx.BIM.Models.Model3DNode, Epx.BIM.Plugins.IPluginNode
+    public class Istutuslaatikko : Epx.BIM.Models.Model3DNode, Epx.BIM.Plugins.IPluginNode
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Esimerkkirakenne"/> class.
@@ -32,10 +32,12 @@ namespace BIMKurssi
         /// <param name="name">The name.</param>
         public Istutuslaatikko(string name) : base(name)
         {
-            Thickness = 50;
-            Width = 150;
-            LengthX = 1000;
-            LengthY = 1500;
+            BoxXLength = 1000;
+            BoxYLength = 1000;
+            TimberXLength = 100;
+            TimberYLength = 100;
+            TimberZLength = 100;
+            TimberStackAmount = 1;
             Origin = new Point3D();
             XAxis = new Vector3D(1, 0, 0);
             YAxis = new Vector3D(0, 1, 0);
@@ -48,17 +50,23 @@ namespace BIMKurssi
         /// Paksuus
         /// </summary>
         [Epx.BIM.NodeData]
-        public double Thickness { get;set; }
+        public double BoxXLength { get; set; }
         /// <summary>
-        /// Leveys
+        /// Laatikon x-suuntainen pituus
         /// </summary>
         [Epx.BIM.NodeData]
-        public double LengthY { get; set; }
+        public double BoxYLength { get; set; }
+        //Laatikon y-suuntainen pituus
         [Epx.BIM.NodeData]
 
-        public double LengthX { get; set; }
+        public double TimberXLength { get; set; }
+        //puutavaran x-suuntainen pituus
         [Epx.BIM.NodeData]
-        public double Width { get; set; }
+        public double TimberYLength { get; set; }
+        [Epx.BIM.NodeData]
+        public double TimberZLength { get; set; }
+        [Epx.BIM.NodeData]
+        public int TimberStackAmount { get; set; }
         #endregion
     }
 }

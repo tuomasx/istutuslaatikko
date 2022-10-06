@@ -15,8 +15,12 @@ namespace BIMKurssi
         public IstutuslaatikkoDialogViewModel()
         {
             Name = "Istutuslaatikko";
-            Thickness = 100;
-            Width = 300;
+            BoxXLength = 1000;
+            BoxYLength = 1000;
+            TimberXLength = 100;
+            TimberYLength = 100;
+            TimberZLength = 100;
+            TimberStackAmount = 1;
 
         }
         #region älä tee muutoksia
@@ -39,15 +43,21 @@ namespace BIMKurssi
         /// <summary>
         /// Paksuus
         /// </summary>
-        public double Thickness { get; set; }
+        public double BoxXLength { get; set; }
         /// <summary>
         /// Leveys
         /// </summary>
-        public double Width { get; set; }
+        public double BoxYLength { get; set; }
         #endregion
 
-        public double LengthX { get; set; }
-        public double LengthY { get; set; }
+        public double TimberXLength { get; set; }
+        public double TimberYLength { get; set; }
+
+        public double TimberZLength { get; set; }
+
+        public int TimberStackAmount { get; set; }
+
+
     }
 
 }

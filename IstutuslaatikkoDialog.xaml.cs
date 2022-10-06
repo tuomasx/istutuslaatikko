@@ -18,9 +18,9 @@ namespace BIMKurssi
 	/// <summary>
 	/// Interaction logic for BeamPluginDialog.xaml
 	/// </summary>
-	public partial class EsimerkkiPluginDialog : Window
+	public partial class IstutuslaatikkoPluginDialog : Window
 	{
-		public EsimerkkiPluginDialog()
+		public IstutuslaatikkoPluginDialog()
 		{
 			InitializeComponent();
 		}
@@ -34,6 +34,11 @@ namespace BIMKurssi
 		{
 			DialogResult = false;
 			this.Close();
+		}
+
+		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+
 		}
 	}
 }

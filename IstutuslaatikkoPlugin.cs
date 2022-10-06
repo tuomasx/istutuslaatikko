@@ -130,18 +130,20 @@ namespace BIMKurssi
         /// <param name="initialPlugin"></param>
         public override void InitializePluginParameters(PluginTool initialPlugin)
         {
-            Istutuslaatikko esimerkki = IsInEditMode ? PluginDataNode as Istutuslaatikko : null;
+            Istutuslaatikko istutuslaatikko = IsInEditMode ? PluginDataNode as Istutuslaatikko : null;
             inputPointIndex = 0;
             // luodaan dialogin tarvitsema view model luokka
             _viewModel = new IstutuslaatikkoDialogViewModel();
             // jos edit tila, niin asetetaan arvot tietomalli luokalta
-            if (esimerkki != null)
+            if (istutuslaatikko != null)
             {
-                _viewModel.Name = esimerkki.Name;
-                _viewModel.Width = esimerkki.Width;
-                _viewModel.Thickness = esimerkki.Thickness;
-                _startPoint = esimerkki.Origin;
-                _endPoint = _startPoint + esimerkki.XAxis;
+                _viewModel.Name = istutuslaatikko.Name;
+                _viewModel.BoxXLength = istutuslaatikko.BoxXLength;
+                _viewModel.BoxYLength = istutuslaatikko.BoxYLength;
+                _startPoint = istutuslaatikko.Origin;
+                _endPoint = _startPoint + istutuslaatikko.XAxis;
+                _viewModel.TimberXLength = istutuslaatikko.TimberXLength;
+                _viewModel.TimberYLength = istutuslaatikko.TimberYLength;
                 // pidetään pisteet vaakassa, kaltevuus parametrien kautta
                 _endPoint.Z = _startPoint.Z;
             }
@@ -155,7 +157,7 @@ namespace BIMKurssi
         /// <returns></returns>
         public override bool ShowDialog(bool isDialogApplyEnabled)
         {
-            EsimerkkiPluginDialog dlg = new EsimerkkiPluginDialog();
+            IstutuslaatikkoPluginDialog dlg = new IstutuslaatikkoPluginDialog();
             dlg.Owner = System.Windows.Application.Current.MainWindow;
             dlg.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             dlg.DataContext = _viewModel;
@@ -298,89 +300,142 @@ namespace BIMKurssi
         /// <param name="parametrit">Dialog view model luokka, jossa käyttäjän dialogissa antamat arvot</param>
         /// <param name="oldEsimerkki">Create moodissa on null, muokkaus tilassa olemassa olevan luokan instanssi</param>
         /// <returns></returns>
-        private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit, Istutuslaatikko oldEsimerkki=null)
+        //private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit, Istutuslaatikko oldEsimerkki=null)
+        //{
+        //    Istutuslaatikko retVal;
+        //    // onko kysessä uuden luonti vai olemassa olevan muokkaaminen
+        //    if (oldEsimerkki == null)
+        //    {
+        //        // luodaan uusi
+        //        retVal = new Istutuslaatikko();
+        //    } else
+        //    {
+        //        // muokataan vanhaa
+        //        retVal = oldEsimerkki;
+        //        // poisteaan aliosta, luodaan aina uudet
+        //        retVal.RemoveAllChildren(false);
+        //    }
+        //    // asetetaan pääluokan attribuutit talteen, jotta arvot säilyvät editointiin
+        //    retVal.Name = parametrit.Name;
+        //    retVal.BoxXLength = parametrit.BoxXLength;
+        //    retVal.BoxYLength = parametrit.BoxYLength;
+        //    retVal.Origin = _startPoint;
+        //    Vector3D xVec = _endPoint - _startPoint;
+        //    retVal.XAxis = xVec;
+        //    // y-akseli suoraan ylös
+        //    retVal.YAxis = new Vector3D(0, 0, 1);
+        //    // luodaan aliosa, sijainti on isännän koordinaatistossa
+        //    Epx.BIM.Models.Member3D mem = new Epx.BIM.Models.Member3D();
+        //    mem.Name = "Vaakassa";
+        //    mem.Origin = new Point3D(0, 0, 0);
+        //    mem.XAxis = new Vector3D(xVec.Length, 0, 0);
+        //    mem.YAxis = new Vector3D(0, 1, 0);
+        //    mem.SizeY = parametrit.BoxXLength;
+        //    mem.SizeZ = parametrit.BoxYLength;
+        //     retVal.AddChild(mem);
+        //   // luodaan boolean leikkaus osalle, aliosa memberille, sijaainti member koordinaatistossa
+        //    // RectangularCuboid on suorakulmainen suuntaissärmiö
+        //    RectangularCuboid subtract = new RectangularCuboid();
+        //    subtract.Origin = new Point3D(0.5 * xVec.Length, 0.5 * parametrit.BoxXLength, -1000);
+        //    subtract.XAxis = new Vector3D(1, 0, 0); // x-akselin suunta osan x-akselin suuntaan
+        //    subtract.YAxis = new Vector3D(0, 1, 0); // y-akseli osan y-akselin suuntaan
+        //    // z-akseli lasketaan automaattisesti ristitulolla ja on osan z-akselin suuntaan
+        //    subtract.XSize = 500; // 500 leveä kolo
+        //    subtract.YSize = 100;  // 100 "paksu" kolo, koska origo (keskipiste) osan yläreunassa, leikkaa vain puolet
+        //    subtract.ZSize = 2000; // tämä mitta riittävä, jotta "puhkaisee" koko osan
+        //    subtract.BooleanOperationType = ModelGeometry3D.BooleanOperationTypeEnum.SubtractionDynamic; // dynaaminen leikkaus
+        //    mem.AddChild(subtract);
+        //    // luodaan toinen kolo vinosti
+        //    subtract = new RectangularCuboid();
+        //    subtract.XAxis = new Vector3D(1, 1, 0); // x-akselin vinosti
+        //    subtract.YAxis = Vector3D.CrossProduct(new Vector3D(0, 1, 1),subtract.XAxis); // y-akseli ristitulolla myös vinoon
+        //    // z-akseli lasketaan automaattisesti ristitulolla ja on osan z-akselin suuntaan
+        //    // asetetaan origo niin, että leikkaa osan yläreunaa
+        //    Vector3D zaxis = subtract.ZAxis;
+        //    zaxis.Normalize();
+        //    subtract.Origin = new Point3D(0.2 * xVec.Length, 0.5 * parametrit.BoxXLength, 0) - zaxis * 1000;
+        //    subtract.XSize = 200; // 200 leveä kolo
+        //    subtract.YSize = 100;  // 100 "paksu" kolo, koska origo (keskipiste) osan yläreunassa, leikkaa vain puolet
+        //    subtract.ZSize = 2000; // tämä mitta riittävä, jotta "puhkaisee" koko osan
+        //    subtract.BooleanOperationType = ModelGeometry3D.BooleanOperationTypeEnum.SubtractionDynamic; // dynaaminen leikkaus
+        //    mem.AddChild(subtract);
+        //    // toinen aliosa
+        //    mem = new Epx.BIM.Models.Member3D();
+        //    mem.Name = "Pystyssä";
+        //    mem.Origin = new Point3D(xVec.Length, 0, 0);
+        //    mem.XAxis = new Vector3D(0, xVec.Length, 0);
+        //    mem.YAxis = new Vector3D(1, 0, 0);
+        //    mem.SizeY = parametrit.BoxXLength;
+        //    mem.SizeZ = parametrit.BoxYLength;
+        //    retVal.AddChild(mem);
+        //    // leikataan osa vinosti poikki
+        //    PlaneCut cut = new PlaneCut();
+        //    cut.Position = new Point3D(0.8*xVec.Length, 0, 0);
+        //    cut.PlaneNormal = new Vector3D(1, 1, 0);
+        //    mem.AddChild(cut);
+        //    // pyöreä pilari
+        //    ConcreteColumn col = new ConcreteColumn();
+        //    col.Round = true;
+        //    col.Diameter = 400;
+        //    col.Origin = new Point3D(0, 500, 0);
+        //    col.XAxis = new Vector3D(0, 1, 0);
+        //    col.YAxis = new Vector3D(1, 0, 0);
+        //    col.Length = 3000;
+        //    retVal.AddChild(col);
+        //    return retVal;
+        //    ///
+        //}
+
+        private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit,Istutuslaatikko oldIstutuslaatikko = null)
         {
             Istutuslaatikko retVal;
-            // onko kysessä uuden luonti vai olemassa olevan muokkaaminen
-            if (oldEsimerkki == null)
+
+            if (oldIstutuslaatikko == null)
             {
-                // luodaan uusi
                 retVal = new Istutuslaatikko();
+
             } else
             {
-                // muokataan vanhaa
-                retVal = oldEsimerkki;
-                // poisteaan aliosta, luodaan aina uudet
+                retVal = oldIstutuslaatikko;
                 retVal.RemoveAllChildren(false);
             }
-            // asetetaan pääluokan attribuutit talteen, jotta arvot säilyvät editointiin
+
+            // attribuutit talteen
             retVal.Name = parametrit.Name;
-            retVal.Thickness = parametrit.Thickness;
-            retVal.Width = parametrit.Width;
+            retVal.BoxXLength = parametrit.BoxXLength;
+            retVal.BoxYLength = parametrit.BoxYLength;
+            retVal.TimberXLength = parametrit.TimberXLength;
+            retVal.TimberYLength = parametrit.TimberYLength;
+            retVal.TimberZLength = parametrit.TimberZLength;
+            retVal.TimberStackAmount = parametrit.TimberStackAmount;
             retVal.Origin = _startPoint;
+
+            //normalisoidaan suuntausvektori
             Vector3D xVec = _endPoint - _startPoint;
+            //xVec.Normalize();
+
             retVal.XAxis = xVec;
-            // y-akseli suoraan ylös
+
             retVal.YAxis = new Vector3D(0, 0, 1);
-            // luodaan aliosa, sijainti on isännän koordinaatistossa
+
             Epx.BIM.Models.Member3D mem = new Epx.BIM.Models.Member3D();
-            mem.Name = "Vaakassa";
+
+            mem.Name = "Vaaassa";
             mem.Origin = new Point3D(0, 0, 0);
             mem.XAxis = new Vector3D(xVec.Length, 0, 0);
             mem.YAxis = new Vector3D(0, 1, 0);
-            mem.SizeY = parametrit.Width;
-            mem.SizeZ = parametrit.Thickness;
-             retVal.AddChild(mem);
-           // luodaan boolean leikkaus osalle, aliosa memberille, sijaainti member koordinaatistossa
-            // RectangularCuboid on suorakulmainen suuntaissärmiö
-            RectangularCuboid subtract = new RectangularCuboid();
-            subtract.Origin = new Point3D(0.5 * xVec.Length, 0.5 * parametrit.Width, -1000);
-            subtract.XAxis = new Vector3D(1, 0, 0); // x-akselin suunta osan x-akselin suuntaan
-            subtract.YAxis = new Vector3D(0, 1, 0); // y-akseli osan y-akselin suuntaan
-            // z-akseli lasketaan automaattisesti ristitulolla ja on osan z-akselin suuntaan
-            subtract.XSize = 500; // 500 leveä kolo
-            subtract.YSize = 100;  // 100 "paksu" kolo, koska origo (keskipiste) osan yläreunassa, leikkaa vain puolet
-            subtract.ZSize = 2000; // tämä mitta riittävä, jotta "puhkaisee" koko osan
-            subtract.BooleanOperationType = ModelGeometry3D.BooleanOperationTypeEnum.SubtractionDynamic; // dynaaminen leikkaus
-            mem.AddChild(subtract);
-            // luodaan toinen kolo vinosti
-            subtract = new RectangularCuboid();
-            subtract.XAxis = new Vector3D(1, 1, 0); // x-akselin vinosti
-            subtract.YAxis = Vector3D.CrossProduct(new Vector3D(0, 1, 1),subtract.XAxis); // y-akseli ristitulolla myös vinoon
-            // z-akseli lasketaan automaattisesti ristitulolla ja on osan z-akselin suuntaan
-            // asetetaan origo niin, että leikkaa osan yläreunaa
-            Vector3D zaxis = subtract.ZAxis;
-            zaxis.Normalize();
-            subtract.Origin = new Point3D(0.2 * xVec.Length, 0.5 * parametrit.Width, 0) - zaxis * 1000;
-            subtract.XSize = 200; // 200 leveä kolo
-            subtract.YSize = 100;  // 100 "paksu" kolo, koska origo (keskipiste) osan yläreunassa, leikkaa vain puolet
-            subtract.ZSize = 2000; // tämä mitta riittävä, jotta "puhkaisee" koko osan
-            subtract.BooleanOperationType = ModelGeometry3D.BooleanOperationTypeEnum.SubtractionDynamic; // dynaaminen leikkaus
-            mem.AddChild(subtract);
-            // toinen aliosa
-            mem = new Epx.BIM.Models.Member3D();
-            mem.Name = "Pystyssä";
-            mem.Origin = new Point3D(xVec.Length, 0, 0);
-            mem.XAxis = new Vector3D(0, xVec.Length, 0);
-            mem.YAxis = new Vector3D(1, 0, 0);
-            mem.SizeY = parametrit.Width;
-            mem.SizeZ = parametrit.Thickness;
+            mem.Length = parametrit.TimberXLength;
+            mem.SizeY = parametrit.TimberYLength;
+            mem.SizeZ = parametrit.TimberZLength;
+
             retVal.AddChild(mem);
-            // leikataan osa vinosti poikki
-            PlaneCut cut = new PlaneCut();
-            cut.Position = new Point3D(0.8*xVec.Length, 0, 0);
-            cut.PlaneNormal = new Vector3D(1, 1, 0);
-            mem.AddChild(cut);
-            // pyöreä pilari
-            ConcreteColumn col = new ConcreteColumn();
-            col.Round = true;
-            col.Diameter = 400;
-            col.Origin = new Point3D(0, 500, 0);
-            col.XAxis = new Vector3D(0, 1, 0);
-            col.YAxis = new Vector3D(1, 0, 0);
-            col.Length = 3000;
-            retVal.AddChild(col);
+
             return retVal;
+
+
+
+
+
         }
     }
 }
