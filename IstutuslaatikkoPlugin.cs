@@ -1,5 +1,6 @@
 using Enterprixe.ValosUITools.Features;
 using Epx.BIM;
+using Epx.BIM.Models;
 using Epx.BIM.Models.Concrete;
 using Epx.BIM.Models.Geometry;
 using Epx.BIM.Models.Steel;
@@ -7,11 +8,13 @@ using Epx.BIM.Models.Timber;
 using Epx.BIM.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using Valos.Ifc.IfcClasses;
 
 namespace BIMKurssi
 {
@@ -423,7 +426,7 @@ namespace BIMKurssi
             Epx.BIM.Models.Member3D mem = new Epx.BIM.Models.Member3D();
 
            
-
+            
             mem.Name = "Vaaassa";
             mem.Origin = new Point3D(0, 0, 0);
             mem.XAxis = new Vector3D(xVec.Length, 0, 0);
@@ -433,6 +436,24 @@ namespace BIMKurssi
             mem.SizeZ = parametrit.TimberZLength;
 
             retVal.AddChild(mem);
+
+            //foreach (Member3D x in retVal.GetChildNodes<Member3D>())
+            //{
+            //  Debug.WriteLine("Looppi tulostus writeline");
+            //Debug.Print("print looppui tulosta");
+            //Debug.Print(retVal.G;
+            //retVal.
+            //}
+
+            //Luodaan leikkaus jolla leikataan palkki p‰‰st‰
+            PlaneCut cut = new PlaneCut();
+            cut.Position = new Point3D(0,0,0);
+            cut.PlaneNormal = new Vector3D(-1,1,0);
+            mem.AddChild(cut);
+
+
+
+
 
             return retVal;
 
