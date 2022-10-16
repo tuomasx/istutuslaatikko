@@ -288,7 +288,7 @@ namespace BIMKurssi
                 // undo:ta ei tarvitse implementoida
                 undoDelegate += delegate
                 {
-                    //_startPoint = oldOrigin;
+                    //_startPoint = oldOrigin;-
                     //_endPoint = oldOrigin + oldX;
                     //rakenne = CreateOrUpdateModel(oldParameters, rakenne);
                 };
@@ -340,7 +340,7 @@ namespace BIMKurssi
         //     retVal.AddChild(mem);
         //   // luodaan boolean leikkaus osalle, aliosa memberille, sijaainti member koordinaatistossa
         //    // RectangularCuboid on suorakulmainen suuntaiss‰rmiˆ
-        //    RectangularCuboid subtract = new RectangularCuboid();
+        //    RectangularCuboid subtract = new -RectangularCuboid();
         //    subtract.Origin = new Point3D(0.5 * xVec.Length, 0.5 * parametrit.BoxXLength, -1000);
         //    subtract.XAxis = new Vector3D(1, 0, 0); // x-akselin suunta osan x-akselin suuntaan
         //    subtract.YAxis = new Vector3D(0, 1, 0); // y-akseli osan y-akselin suuntaan
@@ -388,7 +388,7 @@ namespace BIMKurssi
         //    col.Length = 3000;
         //    retVal.AddChild(col);
         //    return retVal;
-        //    ///
+        //    /// m
         //}
 
         private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit,Istutuslaatikko oldIstutuslaatikko = null)
@@ -417,25 +417,53 @@ namespace BIMKurssi
 
             //normalisoidaan suuntausvektori
             Vector3D xVec = _endPoint - _startPoint;
-            //xVec.Normalize();
+            xVec.Normalize();
 
             retVal.XAxis = xVec;
 
-            retVal.YAxis = new Vector3D(0, 0, 1);
+            retVal.YAxis = new Vector3D(0, 1, 0);
+
+            retVal.ZAxis = new Vector3D(0, 0, 1);
 
             Epx.BIM.Models.Member3D mem = new Epx.BIM.Models.Member3D();
 
-           
-            
-            mem.Name = "Vaaassa";
-            mem.Origin = new Point3D(0, 0, 0);
-            mem.XAxis = new Vector3D(xVec.Length, 0, 0);
-            mem.YAxis = new Vector3D(0, 1, 0);
-            mem.Length = parametrit.TimberXLength;
-            mem.SizeY = parametrit.TimberYLength;
-            mem.SizeZ = parametrit.TimberZLength;
+            int TimberXCons;
+        
+            //lasketaan x suunnassa olevien maara
+            if(retVal.TimberXLength >= retVal.BoxXLength) {
+                TimberXCons = 1;
+            }
+            else
+            {
+                TimberXCons = (int) Math.Ceiling(retVal.BoxXLength / retVal.TimberXLength);
+                Console.WriteLine(TimberXCons);
+            }
 
-            retVal.AddChild(mem);
+            int TimberYCons;
+
+            //lasketaan y suunnassa olevien maara
+            if (retVal.TimberXLength >= retVal.BoxYLength)
+            {
+                TimberYCons = 1;
+            }
+            else
+            {
+                TimberYCons = (int)Math.Ceiling(retVal.BoxYLength / retVal.TimberXLength);
+                //Console.WriteLine(TimberYCons);
+            }
+
+
+
+            //mem.Name = "Vaaassa";
+            //mem.Origin = new Point3D(0,0, 0);
+            //mem.XAxis = new Vector3D(1, 0, 0);
+            //mem.YAxis = new Vector3D(0, 1, 0);
+            //mem.ZAxis = new Vector3D(0, 0, 1);
+            //mem.Length = parametrit.TimberXLength;
+            //mem.SizeY = parametrit.TimberYLength;
+            //mem.SizeZ = parametrit.TimberZLength;
+
+            //retVal.AddChild(mem);
 
             //foreach (Member3D x in retVal.GetChildNodes<Member3D>())
             //{
@@ -446,10 +474,89 @@ namespace BIMKurssi
             //}
 
             //Luodaan leikkaus jolla leikataan palkki p‰‰st‰
-            PlaneCut cut = new PlaneCut();
-            cut.Position = new Point3D(0,0,0);
-            cut.PlaneNormal = new Vector3D(-1,1,0);
-            mem.AddChild(cut);
+            //PlaneCut cut = new PlaneCut();
+            //cut.Position = new Point3D(retVal.TimberXLength/2,retVal.TimberYLength/2,retVal.TimberZLength/2);
+            //cut.PlaneNormal = new Vector3D(-1,1,0);
+            //mem.AddChild(cut);
+
+            Epx.BIM.Models.Member3D[] TimberByX = new Epx.BIM.Models.Member3D[TimberXCons];
+
+            double temp = retVal.TimberXLength;
+
+            for (int i = 0; i<TimberByX.Length; i++) 
+            {
+
+                Epx.BIM.Models.Member3D timb = new();
+
+                timb.Name = "xSuuntainenPalkki" + i;
+                timb.Origin = new Point3D(retVal.TimberXLength * (i + 1), 0, 0);
+                timb.XAxis = new Vector3D(1, 0, 0);
+                timb.YAxis = new Vector3D(0, 1, 0);
+                timb.ZAxis = new Vector3D(0, 0, 1);
+                
+                timb.SizeY = parametrit.TimberYLength;
+                timb.SizeZ = parametrit.TimberZLength;
+
+                if(i == TimberByX.Length-1)
+                {
+                    timb.Length = (retVal.BoxXLength - parametrit.TimberXLength * (i + 1));
+                } 
+                else
+                {
+                    timb.Length = parametrit.TimberXLength;
+                }
+
+                retVal.AddChild(timb);
+
+                if (i == 0)
+                {
+                    PlaneCut cut = new PlaneCut();
+                    cut.Position = new Point3D(retVal.BoxXLength/2, retVal.TimberYLength / 2, retVal.TimberZLength / 2);
+                    //cut.Position = timb.Origin;
+                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
+                    timb.AddChild(cut);
+                }
+
+                
+            }
+
+            for (int i = 0; i < TimberYCons; i++)
+            {
+
+                Epx.BIM.Models.Member3D timb = new();
+
+                timb.Name = "ySuuntainenPalkki" + i;
+                timb.Origin = new Point3D(0, retVal.TimberXLength * (i + 1), 0);
+                timb.XAxis = new Vector3D(0, 1, 0);
+                timb.YAxis = new Vector3D(1, 0, 0);
+                timb.ZAxis = new Vector3D(0, 0, 1);
+                //timb.
+
+                timb.SizeY = parametrit.TimberYLength;
+                timb.SizeZ = parametrit.TimberZLength;
+
+                if (i == TimberYCons-1)
+                {
+                    timb.Length = (retVal.BoxYLength - parametrit.TimberXLength * (i + 1));
+                }
+                else
+                {
+                    timb.Length = parametrit.TimberXLength;
+                }
+
+                retVal.AddChild(timb);
+
+                if (i == 0)
+                {
+                    PlaneCut cut = new PlaneCut();
+                    cut.Position = new Point3D(retVal.BoxXLength / 2, retVal.TimberYLength / 2, retVal.TimberZLength / 2);
+                    //cut.Position = timb.Origin;
+                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
+                    timb.AddChild(cut);
+                }
+
+
+            }
 
 
 
