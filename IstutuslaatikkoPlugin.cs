@@ -1,5 +1,6 @@
 using Enterprixe.ValosUITools.Features;
 using Epx.BIM;
+using Epx.BIM.Drawings;
 using Epx.BIM.Models;
 using Epx.BIM.Models.Concrete;
 using Epx.BIM.Models.Geometry;
@@ -305,7 +306,7 @@ namespace BIMKurssi
         /// <param name="parametrit">Dialog view model luokka, jossa käyttäjän dialogissa antamat arvot</param>
         /// <param name="oldEsimerkki">Create moodissa on null, muokkaus tilassa olemassa olevan luokan instanssi</param>
         /// <returns></returns>
-        private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit,Istutuslaatikko oldIstutuslaatikko = null)
+        private Istutuslaatikko CreateOrUpdateModel(IstutuslaatikkoDialogViewModel parametrit, Istutuslaatikko oldIstutuslaatikko = null)
         {
             Istutuslaatikko retVal;
 
@@ -344,14 +345,16 @@ namespace BIMKurssi
             int TimberXCons = (int)Math.Ceiling(retVal.BoxXLength / retVal.TimberXLength);
             int TimberYCons = (int)Math.Ceiling(retVal.BoxYLength / retVal.TimberXLength);
 
-            Member3D[] TimberByX = new Member3D[TimberXCons];
+            //double[] midPoint = { retVal.BoxXLength / 2, retVal.BoxYLength / 2, 0};
 
-            for (int i = 0; i<TimberByX.Length; i++) 
+            //Member3D[] TimberByX = new Member3D[TimberXCons];
+
+            for (int i = 0; i<TimberXCons; i++) 
             {
                 Member3D timb = new();
 
                 timb.Name = "xSuuntainenPalkki" + i;
-                timb.Origin = new Point3D(retVal.TimberXLength *i, -retVal.TimberYLength/2, 0);
+                timb.Origin = new Point3D(retVal.TimberXLength *i, retVal.TimberYLength/2, 0);
                 timb.XAxis = new Vector3D(1, 0, 0);
                 timb.YAxis = new Vector3D(0, 1, 0);
                 timb.ZAxis = new Vector3D(0, 0, 1);
@@ -359,9 +362,9 @@ namespace BIMKurssi
                 timb.SizeY = parametrit.TimberYLength;
                 timb.SizeZ = parametrit.TimberZLength;
 
-                if (i == TimberByX.Length-1)
+                if (i == TimberXCons-1)
                 {
-                    timb.Length = (retVal.BoxXLength - parametrit.TimberXLength * (i + 1));
+                    timb.Length = (retVal.BoxXLength - retVal.TimberXLength * (i));
                 } 
                 else
                 {
@@ -369,26 +372,57 @@ namespace BIMKurssi
                 }
 
                 retVal.AddChild(timb);
+                timb.PrepareForCopy();
 
                 if (i == 0)
                 {
                     PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(0, retVal.TimberYLength/2, retVal.TimberZLength / 2);
+                    cut.Position = new Point3D(0, -retVal.TimberYLength/2, retVal.TimberZLength / 2);
                     //cut.Position = timb.Origin;
                     //cut.
-                    cut.PlaneNormal = new Vector3D(-1, -1, 0);
+                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
                     timb.AddChild(cut);
                 }
 
-                if (i == TimberByX.Length - 1)
+                if (i == TimberXCons - 1)
                 {
                     PlaneCut cut = new PlaneCut();
                     cut.Position = new Point3D(timb.Length-timb.SizeY/2,retVal.TimberYLength/2,retVal.TimberZLength/2);
-                    cut.PlaneNormal = new Vector3D(1, -1, 0);
-                    timb.AddChild(cut);
+                    cut.PlaneNormal = new Vector3D(1, 1, 0);
+                    //timb.AddChild(cut);
 
                 }
 
+                var complement = new Member3D();
+                complement.CopyData(timb, copyChildrenAlso: true);
+                //complement.ClearGeometries();
+                //complement.Origin = Point3D.Add(timb.Origin, new Vector3D(0, retVal.BoxYLength - retVal.TimberYLength, 0));
+                //complement.ClearGeometries();
+                //complement.XAxis = new Vector3D(-1, 0, 0);
+                Point3D pohta = complement.Origin;
+                Vector3D vektori = new Vector3D(0, -retVal.BoxYLength, 0);
+                complement.Origin = Point3D.Add(pohta, vektori);
+
+                complement.TransForm(new Matrix3D() {
+                    M11 = 1,
+                    M21 = 0,
+                    M31 = 0,
+
+                    M12 = 0,
+                    M22 = -1,
+                    M32 = 0,
+
+                    M13 = 0,
+                    M23 = 0,
+                    M33 = 1,
+
+                    M14 = 0,
+                    M24 = 0,
+                    M34 = 0,
+                    M44 = 1,
+                });
+                //complement.
+                retVal.AddChild(complement);
             }
 
             for (int i = 0; i < TimberYCons; i++)
@@ -397,7 +431,7 @@ namespace BIMKurssi
                 Epx.BIM.Models.Member3D timb = new();
 
                 timb.Name = "ySuuntainenPalkki" + i;
-                timb.Origin = new Point3D(-retVal.TimberYLength/2, retVal.TimberXLength * i, 0);
+                timb.Origin = new Point3D(retVal.TimberYLength/2, retVal.TimberXLength * i, 0);
                 timb.XAxis = new Vector3D(0, 1, 0);
                 timb.YAxis = new Vector3D(1, 0, 0);
                 timb.ZAxis = new Vector3D(0, 0, 1);
@@ -407,7 +441,7 @@ namespace BIMKurssi
 
                 if (i == TimberYCons-1)
                 {
-                    timb.Length = (retVal.BoxYLength - parametrit.TimberXLength * (i + 1));
+                    timb.Length = (retVal.BoxYLength - parametrit.TimberXLength * (i));
                 }
                 else
                 {
@@ -420,7 +454,7 @@ namespace BIMKurssi
                 {
                     PlaneCut cut = new PlaneCut();
                     cut.Position = new Point3D(retVal.TimberYLength/2, 0, retVal.TimberZLength / 2);
-                    cut.PlaneNormal = new Vector3D(-1, -1, 0);
+                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
                     timb.AddChild(cut);
                 }
 
@@ -428,10 +462,15 @@ namespace BIMKurssi
                 {
                     PlaneCut cut = new PlaneCut();
                     cut.Position = new Point3D(retVal.TimberYLength / 2, timb.Length-timb.SizeY/2, retVal.TimberZLength / 2);
-                    cut.PlaneNormal = new Vector3D(1, -1, 0);
-                    timb.AddChild(cut);
+                    cut.PlaneNormal = new Vector3D(-1, -1, 0);
+                    //timb.AddChild(cut);
                 }
+
+                Epx.BIM.Models.Member3D timbx =timb;
+
             }
+
+            //retVal.GetChildNodes()
 
             return retVal;
         }
