@@ -489,7 +489,7 @@ namespace BIMKurssi
                 Epx.BIM.Models.Member3D timb = new();
 
                 timb.Name = "xSuuntainenPalkki" + i;
-                timb.Origin = new Point3D(retVal.TimberXLength * (i + 1), 0, 0);
+                timb.Origin = new Point3D(retVal.TimberXLength *i, -retVal.TimberYLength/2, 0);
                 timb.XAxis = new Vector3D(1, 0, 0);
                 timb.YAxis = new Vector3D(0, 1, 0);
                 timb.ZAxis = new Vector3D(0, 0, 1);
@@ -511,13 +511,23 @@ namespace BIMKurssi
                 if (i == 0)
                 {
                     PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(retVal.BoxXLength/2, retVal.TimberYLength / 2, retVal.TimberZLength / 2);
+                    cut.Position = new Point3D(-retVal.TimberYLength/2, retVal.TimberYLength/2, retVal.TimberZLength / 2);
                     //cut.Position = timb.Origin;
-                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
+                    //cut.
+                    cut.PlaneNormal = new Vector3D(-1, -1, 0);
                     timb.AddChild(cut);
                 }
 
-                
+                if (i == TimberByX.Length - 1)
+                {
+                    PlaneCut cut = new PlaneCut();
+                    cut.Position = new Point3D(timb.Length-timb.SizeY/2,retVal.TimberYLength/2,retVal.TimberZLength/2);
+                    cut.PlaneNormal = new Vector3D(1, -1, 0);
+                    //timb.AddChild(cut);
+                }
+
+
+
             }
 
             for (int i = 0; i < TimberYCons; i++)
@@ -526,7 +536,7 @@ namespace BIMKurssi
                 Epx.BIM.Models.Member3D timb = new();
 
                 timb.Name = "ySuuntainenPalkki" + i;
-                timb.Origin = new Point3D(0, retVal.TimberXLength * (i + 1), 0);
+                timb.Origin = new Point3D(-retVal.TimberYLength/2, retVal.TimberXLength * i, 0);
                 timb.XAxis = new Vector3D(0, 1, 0);
                 timb.YAxis = new Vector3D(1, 0, 0);
                 timb.ZAxis = new Vector3D(0, 0, 1);
@@ -549,14 +559,17 @@ namespace BIMKurssi
                 if (i == 0)
                 {
                     PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(retVal.BoxXLength / 2, retVal.TimberYLength / 2, retVal.TimberZLength / 2);
+                    cut.Position = new Point3D(retVal.TimberYLength/2, retVal.TimberYLength / 2, retVal.TimberZLength / 2);
                     //cut.Position = timb.Origin;
-                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
+                    cut.PlaneNormal = new Vector3D(-1, -1, 0);
                     timb.AddChild(cut);
+                    //timb.AddChild(cut);
                 }
 
 
             }
+
+            
 
 
 
