@@ -387,9 +387,9 @@ namespace BIMKurssi
                 if (i == TimberXCons - 1)
                 {
                     PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(timb.Length-timb.SizeY/2,retVal.TimberYLength/2,retVal.TimberZLength/2);
+                    cut.Position = new Point3D(timb.Length-timb.SizeY,retVal.TimberYLength/2,retVal.TimberZLength/2);
                     cut.PlaneNormal = new Vector3D(1, 1, 0);
-                    //timb.AddChild(cut);
+                    timb.AddChild(cut);
 
                 }
 
@@ -461,9 +461,9 @@ namespace BIMKurssi
                 if (i == TimberYCons - 1)
                 {
                     PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(retVal.TimberYLength / 2, timb.Length-timb.SizeY/2, retVal.TimberZLength / 2);
-                    cut.PlaneNormal = new Vector3D(-1, -1, 0);
-                    //timb.AddChild(cut);
+                    cut.Position = new Point3D(-retVal.TimberYLength / 2, retVal.BoxXLength, retVal.TimberZLength / 2);
+                    cut.PlaneNormal = new Vector3D(1, 1, 0);
+                    timb.AddChild(cut);
                 }
 
                 Epx.BIM.Models.Member3D timbx =timb;
