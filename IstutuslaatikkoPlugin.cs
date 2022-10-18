@@ -345,9 +345,6 @@ namespace BIMKurssi
             int TimberXCons = (int)Math.Ceiling(retVal.BoxXLength / retVal.TimberXLength);
             int TimberYCons = (int)Math.Ceiling(retVal.BoxYLength / retVal.TimberXLength);
 
-            //double[] midPoint = { retVal.BoxXLength / 2, retVal.BoxYLength / 2, 0};
-
-            //Member3D[] TimberByX = new Member3D[TimberXCons];
 
             for (int i = 0; i<TimberXCons; i++) 
             {
@@ -378,8 +375,6 @@ namespace BIMKurssi
                 {
                     PlaneCut cut = new PlaneCut();
                     cut.Position = new Point3D(0, -retVal.TimberYLength/2, retVal.TimberZLength / 2);
-                    //cut.Position = timb.Origin;
-                    //cut.
                     cut.PlaneNormal = new Vector3D(-1, 1, 0);
                     timb.AddChild(cut);
                 }
@@ -395,9 +390,7 @@ namespace BIMKurssi
 
                 var complement = new Member3D();
                 complement.CopyData(timb, copyChildrenAlso: true);
-                //complement.ClearGeometries();
                 //complement.Origin = Point3D.Add(timb.Origin, new Vector3D(0, retVal.BoxYLength - retVal.TimberYLength, 0));
-                //complement.ClearGeometries();
                 //complement.XAxis = new Vector3D(-1, 0, 0);
                 Point3D pohta = complement.Origin;
                 Vector3D vektori = new Vector3D(0, -retVal.BoxYLength, 0);
@@ -421,7 +414,7 @@ namespace BIMKurssi
                     M34 = 0,
                     M44 = 1,
                 });
-                //complement.
+                
                 retVal.AddChild(complement);
             }
 
@@ -466,11 +459,36 @@ namespace BIMKurssi
                     timb.AddChild(cut);
                 }
 
-                Epx.BIM.Models.Member3D timbx =timb;
+                var complement = new Member3D();
+                complement.CopyData(timb, copyChildrenAlso: true);
+                Point3D pohta = complement.Origin;
+                Vector3D vektori = new Vector3D(-retVal.BoxXLength,0, 0);
+                complement.Origin = Point3D.Add(pohta, vektori);
+
+                complement.TransForm(new Matrix3D()
+                {
+                    M11 = -1,
+                    M21 = 0,
+                    M31 = 0,
+
+                    M12 = 0,
+                    M22 = 1,
+                    M32 = 0,
+
+                    M13 = 0,
+                    M23 = 0,
+                    M33 = 1,
+
+                    M14 = 0,
+                    M24 = 0,
+                    M34 = 0,
+                    M44 = 1,
+                });
+
+                retVal.AddChild(complement);
+
 
             }
-
-            //retVal.GetChildNodes()
 
             return retVal;
         }
