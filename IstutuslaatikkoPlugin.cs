@@ -356,7 +356,7 @@ namespace BIMKurssi
                     Member3D timb = new();
 
                     timb.Name = "xSuuntainenPalkki" + i;
-                    timb.Origin = new Point3D(retVal.TimberXLength * i, retVal.TimberYLength / 2, -zDis);
+                    timb.Origin = new Point3D(retVal.TimberXLength * i, retVal.TimberYLength / 2, zDis);
                     timb.XAxis = new Vector3D(1, 0, 0);
                     timb.YAxis = new Vector3D(0, 1, 0);
                     timb.ZAxis = new Vector3D(0, 0, 1);
@@ -434,7 +434,7 @@ namespace BIMKurssi
                     Epx.BIM.Models.Member3D timb = new();
 
                     timb.Name = "ySuuntainenPalkki" + i;
-                    timb.Origin = new Point3D(retVal.TimberYLength / 2, retVal.TimberXLength * i, -zDis);
+                    timb.Origin = new Point3D(retVal.TimberYLength / 2, retVal.TimberXLength * i, zDis);
                     timb.XAxis = new Vector3D(0, 1, 0);
                     timb.YAxis = new Vector3D(1, 0, 0);
                     timb.ZAxis = new Vector3D(0, 0, 1);
