@@ -15,12 +15,12 @@ namespace BIMKurssi
         public IstutuslaatikkoDialogViewModel()
         {
             Name = "Istutuslaatikko";
-            BoxXLength = 1000;
+            BoxXLength = 2000;
             BoxYLength = 1000;
-            TimberXLength = 100;
+            TimberXLength = 1000;
             TimberYLength = 100;
             TimberZLength = 100;
-            TimberStackAmount = 1;
+            TimberStackAmount = 3;
 
         }
         #region älä tee muutoksia
