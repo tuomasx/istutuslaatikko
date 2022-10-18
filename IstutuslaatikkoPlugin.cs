@@ -345,149 +345,161 @@ namespace BIMKurssi
             int TimberXCons = (int)Math.Ceiling(retVal.BoxXLength / retVal.TimberXLength);
             int TimberYCons = (int)Math.Ceiling(retVal.BoxYLength / retVal.TimberXLength);
 
-
-            for (int i = 0; i<TimberXCons; i++) 
+            //ylin silmukka on z-akselille eli paallekkaisille kerroksille
+            for (int s = 0; s < retVal.TimberStackAmount; s++)
             {
-                Member3D timb = new();
+                double zDis = s * retVal.TimberZLength;
 
-                timb.Name = "xSuuntainenPalkki" + i;
-                timb.Origin = new Point3D(retVal.TimberXLength *i, retVal.TimberYLength/2, 0);
-                timb.XAxis = new Vector3D(1, 0, 0);
-                timb.YAxis = new Vector3D(0, 1, 0);
-                timb.ZAxis = new Vector3D(0, 0, 1);
-                
-                timb.SizeY = parametrit.TimberYLength;
-                timb.SizeZ = parametrit.TimberZLength;
-
-                if (i == TimberXCons-1)
+                //x-akselilla olevat
+                for (int i = 0; i < TimberXCons; i++)
                 {
-                    timb.Length = (retVal.BoxXLength - retVal.TimberXLength * (i));
+                    Member3D timb = new();
+
+                    timb.Name = "xSuuntainenPalkki" + i;
+                    timb.Origin = new Point3D(retVal.TimberXLength * i, retVal.TimberYLength / 2, -zDis);
+                    timb.XAxis = new Vector3D(1, 0, 0);
+                    timb.YAxis = new Vector3D(0, 1, 0);
+                    timb.ZAxis = new Vector3D(0, 0, 1);
+
+                    timb.SizeY = parametrit.TimberYLength;
+                    timb.SizeZ = parametrit.TimberZLength;
+
+                    if (i == TimberXCons - 1)
+                    {
+                        timb.Length = (retVal.BoxXLength - retVal.TimberXLength * (i));
+                    }
+                    else
+                    {
+                        timb.Length = parametrit.TimberXLength;
+                    }
+
+                    retVal.AddChild(timb);
+                    timb.PrepareForCopy();
+
+                    //Leikkaukset
+
+                    if (i == 0)
+                    {
+                        PlaneCut cut = new PlaneCut();
+                        cut.Position = new Point3D(0, -retVal.TimberYLength / 2, retVal.TimberZLength / 2);
+                        cut.PlaneNormal = new Vector3D(-1, 1, 0);
+                        timb.AddChild(cut);
+                    }
+
+                    if (i == TimberXCons - 1)
+                    {
+                        PlaneCut cut = new PlaneCut();
+                        cut.Position = new Point3D(timb.Length - timb.SizeY, retVal.TimberYLength / 2, retVal.TimberZLength / 2);
+                        cut.PlaneNormal = new Vector3D(1, 1, 0);
+                        timb.AddChild(cut);
+
+                    }
+
+                    
+                    // muodostetaan komplementti edella luodulle timb oliolle, joka asetaan vastakkaisen 
+                    //seinan osaksi
+                    var complement = new Member3D();
+                    complement.CopyData(timb, copyChildrenAlso: true);
+                    Point3D pohta = complement.Origin;
+                    Vector3D vektori = new Vector3D(0, -retVal.BoxYLength, 0);
+                    complement.Origin = Point3D.Add(pohta, vektori);
+
+                    complement.TransForm(new Matrix3D()
+                    {
+                        M11 = 1,
+                        M21 = 0,
+                        M31 = 0,
+
+                        M12 = 0,
+                        M22 = -1,
+                        M32 = 0,
+
+                        M13 = 0,
+                        M23 = 0,
+                        M33 = 1,
+
+                        M14 = 0,
+                        M24 = 0,
+                        M34 = 0,
+                        M44 = 1,
+                    });
+
+                    retVal.AddChild(complement);
+                }
+
+                //Muodostetaan y-akselille samoilla periaatteilla
+                for (int i = 0; i < TimberYCons; i++)
+                {
+
+                    Epx.BIM.Models.Member3D timb = new();
+
+                    timb.Name = "ySuuntainenPalkki" + i;
+                    timb.Origin = new Point3D(retVal.TimberYLength / 2, retVal.TimberXLength * i, -zDis);
+                    timb.XAxis = new Vector3D(0, 1, 0);
+                    timb.YAxis = new Vector3D(1, 0, 0);
+                    timb.ZAxis = new Vector3D(0, 0, 1);
+
+                    timb.SizeY = parametrit.TimberYLength;
+                    timb.SizeZ = parametrit.TimberZLength;
+
+                    if (i == TimberYCons - 1)
+                    {
+                        timb.Length = (retVal.BoxYLength - parametrit.TimberXLength * (i));
+                    }
+                    else
+                    {
+                        timb.Length = parametrit.TimberXLength;
+                    }
+
+                    retVal.AddChild(timb);
+                    timb.PrepareForCopy();
+
+                    if (i == 0)
+                    {
+                        PlaneCut cut = new PlaneCut();
+                        cut.Position = new Point3D(retVal.TimberYLength / 2, 0, retVal.TimberZLength / 2);
+                        cut.PlaneNormal = new Vector3D(-1, 1, 0);
+                        timb.AddChild(cut);
+                    }
+
+                    if (i == TimberYCons - 1)
+                    {
+                        PlaneCut cut = new PlaneCut();
+                        cut.Position = new Point3D(-retVal.TimberYLength / 2, timb.Length, retVal.TimberZLength / 2);
+                        cut.PlaneNormal = new Vector3D(1, 1, 0);
+                        timb.AddChild(cut);
+                    }
+
+                    var complement = new Member3D();
+                    complement.CopyData(timb, copyChildrenAlso: true);
+                    Point3D pohta = complement.Origin;
+                    Vector3D vektori = new Vector3D(-retVal.BoxXLength, 0, 0);
+                    complement.Origin = Point3D.Add(pohta, vektori);
+
+                    complement.TransForm(new Matrix3D()
+                    {
+                        M11 = -1,
+                        M21 = 0,
+                        M31 = 0,
+
+                        M12 = 0,
+                        M22 = 1,
+                        M32 = 0,
+
+                        M13 = 0,
+                        M23 = 0,
+                        M33 = 1,
+
+                        M14 = 0,
+                        M24 = 0,
+                        M34 = 0,
+                        M44 = 1,
+                    });
+
+                    retVal.AddChild(complement);
+
+
                 } 
-                else
-                {
-                    timb.Length = parametrit.TimberXLength;
-                }
-
-                retVal.AddChild(timb);
-                timb.PrepareForCopy();
-
-                if (i == 0)
-                {
-                    PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(0, -retVal.TimberYLength/2, retVal.TimberZLength / 2);
-                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
-                    timb.AddChild(cut);
-                }
-
-                if (i == TimberXCons - 1)
-                {
-                    PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(timb.Length-timb.SizeY,retVal.TimberYLength/2,retVal.TimberZLength/2);
-                    cut.PlaneNormal = new Vector3D(1, 1, 0);
-                    timb.AddChild(cut);
-
-                }
-
-                var complement = new Member3D();
-                complement.CopyData(timb, copyChildrenAlso: true);
-                //complement.Origin = Point3D.Add(timb.Origin, new Vector3D(0, retVal.BoxYLength - retVal.TimberYLength, 0));
-                //complement.XAxis = new Vector3D(-1, 0, 0);
-                Point3D pohta = complement.Origin;
-                Vector3D vektori = new Vector3D(0, -retVal.BoxYLength, 0);
-                complement.Origin = Point3D.Add(pohta, vektori);
-
-                complement.TransForm(new Matrix3D() {
-                    M11 = 1,
-                    M21 = 0,
-                    M31 = 0,
-
-                    M12 = 0,
-                    M22 = -1,
-                    M32 = 0,
-
-                    M13 = 0,
-                    M23 = 0,
-                    M33 = 1,
-
-                    M14 = 0,
-                    M24 = 0,
-                    M34 = 0,
-                    M44 = 1,
-                });
-                
-                retVal.AddChild(complement);
-            }
-
-            for (int i = 0; i < TimberYCons; i++)
-            {
-
-                Epx.BIM.Models.Member3D timb = new();
-
-                timb.Name = "ySuuntainenPalkki" + i;
-                timb.Origin = new Point3D(retVal.TimberYLength/2, retVal.TimberXLength * i, 0);
-                timb.XAxis = new Vector3D(0, 1, 0);
-                timb.YAxis = new Vector3D(1, 0, 0);
-                timb.ZAxis = new Vector3D(0, 0, 1);
-
-                timb.SizeY = parametrit.TimberYLength;
-                timb.SizeZ = parametrit.TimberZLength;
-
-                if (i == TimberYCons-1)
-                {
-                    timb.Length = (retVal.BoxYLength - parametrit.TimberXLength * (i));
-                }
-                else
-                {
-                    timb.Length = parametrit.TimberXLength;
-                }
-
-                retVal.AddChild(timb);
-
-                if (i == 0)
-                {
-                    PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(retVal.TimberYLength/2, 0, retVal.TimberZLength / 2);
-                    cut.PlaneNormal = new Vector3D(-1, 1, 0);
-                    timb.AddChild(cut);
-                }
-
-                if (i == TimberYCons - 1)
-                {
-                    PlaneCut cut = new PlaneCut();
-                    cut.Position = new Point3D(-retVal.TimberYLength / 2, retVal.BoxXLength, retVal.TimberZLength / 2);
-                    cut.PlaneNormal = new Vector3D(1, 1, 0);
-                    timb.AddChild(cut);
-                }
-
-                var complement = new Member3D();
-                complement.CopyData(timb, copyChildrenAlso: true);
-                Point3D pohta = complement.Origin;
-                Vector3D vektori = new Vector3D(-retVal.BoxXLength,0, 0);
-                complement.Origin = Point3D.Add(pohta, vektori);
-
-                complement.TransForm(new Matrix3D()
-                {
-                    M11 = -1,
-                    M21 = 0,
-                    M31 = 0,
-
-                    M12 = 0,
-                    M22 = 1,
-                    M32 = 0,
-
-                    M13 = 0,
-                    M23 = 0,
-                    M33 = 1,
-
-                    M14 = 0,
-                    M24 = 0,
-                    M34 = 0,
-                    M44 = 1,
-                });
-
-                retVal.AddChild(complement);
-
-
             }
 
             return retVal;
